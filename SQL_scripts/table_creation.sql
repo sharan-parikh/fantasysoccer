@@ -32,9 +32,10 @@ CREATE TABLE IF NOT EXISTS player_position (
 );
 
 CREATE TABLE IF NOT EXISTS physical_team (
-    team_name VARCHAR(32) PRIMARY KEY
+    id INT PRIMARY KEY,
+    name VARCHAR(32) UNIQUE NOT NULL
 );
-
+	
 CREATE TABLE IF NOT EXISTS virtual_team (
     username VARCHAR(32) UNIQUE NOT NULL,
     team_name VARCHAR(160) UNIQUE NOT NULL,
@@ -46,10 +47,10 @@ CREATE TABLE IF NOT EXISTS virtual_team (
 CREATE TABLE IF NOT EXISTS physical_player (
     player_id VARCHAR(32) PRIMARY KEY,
     physical_team_name VARCHAR(32) UNIQUE NOT NULL,
-    position_name VARCHAR(16) NOT NULL,
+    position_name VARCHAR(16),
     virtual_player_price INT NOT NULL,
     CONSTRAINT physical_player_team_name_fk FOREIGN KEY (physical_team_name)
-        REFERENCES physical_team (team_name),
+        REFERENCES physical_team (name),
     CONSTRAINT physical_player_position_name_fk FOREIGN KEY (position_name)
         REFERENCES player_position (position_name)
 );
