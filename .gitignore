@@ -1,2 +1,4 @@
 *.pyc
 *.dtmp
+.env
+node_modules
