@@ -1,5 +1,6 @@
 from mysql.connector import connect, Error
 import json
+from tqdm import tqdm
 
 def read_json(filename):
     with open(filename, 'r') as f:
@@ -9,13 +10,13 @@ def read_json(filename):
 
 def enter_data(connection, filename):
     items = read_json(filename)['response']
-    for item in items:
+    for item in tqdm(items):
         team = item.get('team')
         if team:
             with connection.cursor() as cursor:
                 sql = "INSERT INTO physical_team (id, name) VALUES (%s, %s)"
                 cursor.execute(sql, (team['id'], team['name']))
-                print(f"Inserted team: {team}")
+                # print(f"Inserted team: {team}")
     connection.commit()
 
 

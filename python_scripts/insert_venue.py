@@ -1,5 +1,6 @@
 from mysql.connector import connect, Error
 import json
+from tqdm import tqdm
 from pprint import pprint
 
 def read_json(filename):
@@ -10,10 +11,10 @@ def read_json(filename):
 
 def enter_data(connection, filename):
     data = read_json(filename)
-    for venue in data['venues']:
+    for venue in tqdm(data['venues']):
         with connection.cursor() as cursor:
             cursor.execute(f"INSERT INTO venue (id, name, address, country, capacity) VALUES ({venue['id']}, '{venue['name']}', '{venue['address']}', '{venue['country']}', {venue['capacity']})")
-            pprint(venue['name'])
+            # pprint(venue['name'])
     connection.commit()
 
 
