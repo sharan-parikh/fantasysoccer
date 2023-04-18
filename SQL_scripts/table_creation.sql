@@ -29,8 +29,16 @@ CREATE TABLE IF NOT EXISTS venue (
 -- player & team related
 CREATE TABLE IF NOT EXISTS player_position (
 	id INT PRIMARY KEY,
-    position_name VARCHAR(16) NOT NULL
+    name VARCHAR(16) NOT NULL
 );
+
+INSERT INTO player_position
+	(id, name) 
+VALUES
+	(0, 'Goalkeeper'),
+    (1, 'Defender'),
+    (2, 'Midfielder'),
+    (3, 'Attacker');
 
 CREATE TABLE IF NOT EXISTS physical_team (
     id INT PRIMARY KEY,
@@ -47,17 +55,20 @@ CREATE TABLE IF NOT EXISTS virtual_team (
 
 CREATE TABLE IF NOT EXISTS player (
     id INT PRIMARY KEY,
-    name VARCHAR(64) NOT NULL,
+    first_name VARCHAR(64) NOT NULL,
+    last_name VARCHAR(64) NOT NULL,
     physical_team_id INT NOT NULL,
-    position_name VARCHAR(16),
-    virtual_player_price INT NOT NULL,
+    position_id INT NOT NULL,
+    virtual_player_price FLOAT NOT NULL,
     CONSTRAINT player_team_name_fk FOREIGN KEY (physical_team_id)
-        REFERENCES physical_team (id)
+       REFERENCES physical_team (id),
+	CONSTRAINT player_position_fk FOREIGN KEY (position_id)
+       REFERENCES player_position (id)
 );
 
 
 CREATE TABLE IF NOT EXISTS fixture (
-    id VARCHAR(32) PRIMARY KEY,
+    id INT PRIMARY KEY,
     venue_id INT NOT NULL,
     match_date DATE,
     home_team_id INT NOT NULL,
@@ -71,3 +82,18 @@ CREATE TABLE IF NOT EXISTS fixture (
     CONSTRAINT home_away_constraint UNIQUE (home_team_id, away_team_id)
 );
     
+CREATE TABLE IF NOT EXISTS match_stats (
+    id INT NOT NULL,
+    player_id INT NOT NULL,
+    minutes_played INT NOT NULL,
+    goals INT NOT NULL,
+    assists INT NOT NULL,
+    yellow_cards INT NOT NULL,
+    red_cards INT NOT NULL,
+    saves INT NOT NULL,
+    CONSTRAINT match_stats_pk PRIMARY KEY (id, player_id),
+    CONSTRAINT match_stats_fixture_fk FOREIGN KEY (id)
+        REFERENCES fixture (id),
+	CONSTRAINT match_stats_player_fk FOREIGN KEY (player_id)
+        REFERENCES player (id)
+);
