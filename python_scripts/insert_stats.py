@@ -31,6 +31,11 @@ def parse_json(data):
                     parsed_data['assists'] = 0
                 parsed_data['yellow_cards'] = player['statistics'][0]['cards']['yellow']
                 parsed_data['red_cards'] = player['statistics'][0]['cards']['red']
+
+                parsed_data['duels_won'] = player['statistics'][0]['duels']['won']
+                if parsed_data['duels_won'] is None:
+                    parsed_data['duels_won'] = 0
+
                 parsed_data['saves'] = player['statistics'][0]['goals']['saves']
                 if parsed_data['saves'] is None:
                     parsed_data['saves'] = 0

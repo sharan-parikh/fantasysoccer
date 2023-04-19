@@ -45,33 +45,84 @@ create_virtual_team_proc:BEGIN
 END $$
 DELIMITER ;
 
--- sp to add or update players from a virtual team
-DELIMITER //
-
-CREATE PROCEDURE add_update_players(
-    IN team_username VARCHAR(32),
-    IN team_id INT,
-    IN player_ids VARCHAR(255)
-)
+-- sp to add players to a virtual team
+DELIMITER $$
+CREATE PROCEDURE AddPlayerToVirtualTeam(IN virtualTeamId INT, IN playerId INT)
 BEGIN
-    -- Check if the virtual team exists
-    DECLARE team_count INT;
-    SELECT COUNT(*) INTO team_count FROM virtual_team WHERE id = team_id AND username = team_username;
-    IF team_count = 0 THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Virtual team does not exist for the given username and id';
+    DECLARE playerPrice FLOAT;
+    DECLARE remainingBudget INT;
+
+    -- Get the price of the player
+    SELECT virtual_player_price INTO playerPrice
+    FROM player
+    WHERE id = playerId;
+
+    -- Check if the player is not already in the virtual team
+    IF NOT EXISTS (SELECT 1 FROM virtual_team_player WHERE virtual_team_id = virtualTeamId AND player_id = playerId) THEN
+        -- Get the remaining budget of the virtual team
+        SELECT remaining_budget INTO remainingBudget
+        FROM virtual_team
+        WHERE id = virtualTeamId;
+
+        -- Check if the virtual team has enough budget to buy the player
+        IF remainingBudget >= playerPrice THEN
+            -- Add the player to the virtual team
+            INSERT INTO virtual_team_player (virtual_team_id, player_id)
+            VALUES (virtualTeamId, playerId);
+
+            -- Update the remaining budget of the virtual team
+            UPDATE virtual_team
+            SET remaining_budget = remaining_budget - playerPrice
+            WHERE id = virtualTeamId;
+        ELSE
+            SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'Not enough budget to buy the player';
+        END IF;
+    ELSE
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Player is already in the virtual team';
     END IF;
-
-    -- Delete all existing players for the virtual team
-    DELETE FROM virtual_team_player WHERE virtual_team_id = team_id;
-
-    -- Add the new players for the virtual team
-    INSERT INTO virtual_team_player (virtual_team_id, player_id)
-    SELECT team_id, id FROM player
-    WHERE FIND_IN_SET(id, player_ids) > 0;
-
-    -- Update the last update date for the virtual team
-    UPDATE virtual_team SET last_update = NOW() WHERE id = team_id;
-END //
-
+END$$
 DELIMITER ;
 
+-- sp to remove player from a virtual team
+DELIMITER $$
+CREATE PROCEDURE RemovePlayerFromVirtualTeam(IN virtualTeamId INT, IN playerId INT)
+BEGIN
+    DECLARE playerPrice FLOAT;
+    
+    -- it also adds back the player cost back to the team remaining budget
+    -- get player price
+    SELECT virtual_player_price INTO playerPrice
+    FROM player
+    WHERE id = playerId;
+    
+    -- update the remaining budget
+    UPDATE virtual_team
+    SET remaining_budget = remaining_budget + playerPrice
+    WHERE id = virtualTeamId;
+    
+    -- remove the player from virtual team
+    DELETE FROM virtual_team_player
+    WHERE virtual_team_id = virtualTeamId AND player_id = playerId;
+END$$
+DELIMITER ;
+
+-- Get All players in a given virtual team
+DELIMITER $$
+CREATE PROCEDURE GetPlayersInVirtualTeam(IN virtualTeamId INT)
+BEGIN
+    SELECT
+        player.id,
+        player.first_name,
+        player.last_name,
+        player_position.name AS position,
+        player.virtual_player_price AS price
+    FROM
+        virtual_team_player
+    INNER JOIN player ON virtual_team_player.player_id = player.id
+    INNER JOIN player_position ON player.position_id = player_position.id
+    WHERE
+        virtual_team_player.virtual_team_id = virtualTeamId;
+END$$
+DELIMITER ;

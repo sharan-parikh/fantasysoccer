@@ -3,3 +3,4 @@
 *.dtmp
 .env
 node_modules
+scratch.sql

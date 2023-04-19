@@ -102,7 +102,7 @@ CREATE TABLE IF NOT EXISTS virtual_team (
 );
 
 CREATE TABLE IF NOT EXISTS virtual_team_player (
-    id INT PRIMARY KEY,
+    id INT PRIMARY KEY AUTO_INCREMENT,
     virtual_team_id INT NOT NULL,
     player_id INT NOT NULL,
     CONSTRAINT virtual_team_id_fk FOREIGN KEY (virtual_team_id)
