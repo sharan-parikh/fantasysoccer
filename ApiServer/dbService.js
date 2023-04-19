@@ -1,28 +1,26 @@
-const mysql = require("mysql2");
+const mysql = require("mysql2/promise");
 
 var connection;
 
-function connect({dbConnectionUrl, username, password, dbName}, callback) {
-    connection = mysql.createConnection({
-        host: dbConnectionUrl,
-        port: 3306,
-        user: username,
-        password: password,
-        database: dbName
-      });
-      
-      connection.connect(function(err) {
-        if (err) throw err;
-        console.log("Database Connected!");
-        callback()
-      });
+async function connect({dbConnectionUrl, username, password, dbName}) {
+  if(connection) {
+    return connection;
+  }
+  connection = await mysql.createConnection({
+    host: dbConnectionUrl,
+    port: 3306,
+    user: username,
+    password: password,
+    database: dbName
+  });
+  return connection;
 }
 
 function getConnection() {
-    return connection;
+  return connection;
 }
 
 module.exports = {
-    connect,
-    getConnection
+  connect,
+  getConnection
 }
