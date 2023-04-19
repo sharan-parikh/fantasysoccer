@@ -126,3 +126,24 @@ BEGIN
         virtual_team_player.virtual_team_id = virtualTeamId;
 END$$
 DELIMITER ;
+
+-- Get Virtual Team Info
+DELIMITER $$
+CREATE PROCEDURE GetVirtualTeamDetails(IN virtualTeamId INT)
+BEGIN
+    SELECT
+        virtual_team.id,
+        users.username,
+        users.first_name,
+        users.last_name,
+        virtual_team.team_name,
+        virtual_team.remaining_budget,
+        virtual_team.creation_date,
+        virtual_team.last_update
+    FROM
+        virtual_team
+    INNER JOIN users ON virtual_team.username = users.username
+    WHERE
+        virtual_team.id = virtualTeamId;
+END$$
+DELIMITER ;

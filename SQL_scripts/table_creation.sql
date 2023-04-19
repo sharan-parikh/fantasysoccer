@@ -94,7 +94,7 @@ CREATE TABLE IF NOT EXISTS virtual_team (
     id INT PRIMARY KEY AUTO_INCREMENT,
     username VARCHAR(32) UNIQUE NOT NULL,
     team_name VARCHAR(160) UNIQUE NOT NULL,
-    remaining_budget INT NOT NULL,
+    remaining_budget FLOAT NOT NULL,
     creation_date DATE NOT NULL,
     last_update DATE,
     CONSTRAINT virtual_team_username_fk FOREIGN KEY (username)
