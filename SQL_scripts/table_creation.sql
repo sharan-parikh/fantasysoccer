@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS venue (
 
 -- player & team related
 CREATE TABLE IF NOT EXISTS player_position (
-	id INT PRIMARY KEY,
+    id INT PRIMARY KEY,
     name VARCHAR(16) NOT NULL
 );
 
@@ -44,14 +44,6 @@ CREATE TABLE IF NOT EXISTS physical_team (
     id INT PRIMARY KEY,
     name VARCHAR(32) UNIQUE NOT NULL
 );
-	
-CREATE TABLE IF NOT EXISTS virtual_team (
-    username VARCHAR(32) UNIQUE NOT NULL,
-    team_name VARCHAR(160) UNIQUE NOT NULL,
-    CONSTRAINT virtual_team_username_fk FOREIGN KEY (username)
-        REFERENCES users (username),
-    CONSTRAINT virtual_team_pk PRIMARY KEY (username , team_name)
-);
 
 CREATE TABLE IF NOT EXISTS player (
     id INT PRIMARY KEY,
@@ -61,9 +53,9 @@ CREATE TABLE IF NOT EXISTS player (
     position_id INT NOT NULL,
     virtual_player_price FLOAT NOT NULL,
     CONSTRAINT player_team_name_fk FOREIGN KEY (physical_team_id)
-       REFERENCES physical_team (id),
-	CONSTRAINT player_position_fk FOREIGN KEY (position_id)
-       REFERENCES player_position (id)
+        REFERENCES physical_team (id),
+    CONSTRAINT player_position_fk FOREIGN KEY (position_id)
+        REFERENCES player_position (id)
 );
 
 
@@ -75,11 +67,11 @@ CREATE TABLE IF NOT EXISTS fixture (
     away_team_id INT NOT NULL,
     CONSTRAINT physical_team_home_fk FOREIGN KEY (home_team_id)
         REFERENCES physical_team (id),
-	CONSTRAINT physical_team_away_fk FOREIGN KEY (away_team_id)
+    CONSTRAINT physical_team_away_fk FOREIGN KEY (away_team_id)
         REFERENCES physical_team (id),
-	CONSTRAINT fixture_details_venue_id_fk FOREIGN KEY (venue_id)
+    CONSTRAINT fixture_details_venue_id_fk FOREIGN KEY (venue_id)
         REFERENCES venue (id),
-    CONSTRAINT home_away_constraint UNIQUE (home_team_id, away_team_id)
+    CONSTRAINT home_away_unique UNIQUE (home_team_id , away_team_id)
 );
     
 CREATE TABLE IF NOT EXISTS match_stats (
@@ -91,9 +83,31 @@ CREATE TABLE IF NOT EXISTS match_stats (
     yellow_cards INT NOT NULL,
     red_cards INT NOT NULL,
     saves INT NOT NULL,
-    CONSTRAINT match_stats_pk PRIMARY KEY (id, player_id),
+    CONSTRAINT match_stats_pk PRIMARY KEY (id , player_id),
     CONSTRAINT match_stats_fixture_fk FOREIGN KEY (id)
         REFERENCES fixture (id),
-	CONSTRAINT match_stats_player_fk FOREIGN KEY (player_id)
+    CONSTRAINT match_stats_player_fk FOREIGN KEY (player_id)
         REFERENCES player (id)
+);
+
+CREATE TABLE IF NOT EXISTS virtual_team (
+    id INT PRIMARY KEY,
+    username VARCHAR(32) UNIQUE NOT NULL,
+    team_name VARCHAR(160) UNIQUE NOT NULL,
+    remaining_budget INT NOT NULL,
+    creation_date DATE NOT NULL,
+    last_update DATE,
+    CONSTRAINT virtual_team_username_fk FOREIGN KEY (username)
+        REFERENCES users (username)
+);
+
+CREATE TABLE IF NOT EXISTS virtual_team_player (
+    id INT PRIMARY KEY,
+    virtual_team_id INT NOT NULL,
+    player_id INT NOT NULL,
+    CONSTRAINT virtual_team_id_fk FOREIGN KEY (virtual_team_id)
+        REFERENCES virtual_team (id),
+    CONSTRAINT virtual_player_id_fk FOREIGN KEY (player_id)
+        REFERENCES player (id),
+    CONSTRAINT virtual_team_player_unique UNIQUE (virtual_team_id , player_id)
 );
