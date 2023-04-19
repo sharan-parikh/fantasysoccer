@@ -82,7 +82,7 @@ DROP TABLE IF EXISTS `match_stats`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `match_stats` (
-  `id` int NOT NULL,
+  `fixture_id` int NOT NULL,
   `player_id` int NOT NULL,
   `minutes_played` int NOT NULL,
   `goals` int NOT NULL,
@@ -90,9 +90,9 @@ CREATE TABLE `match_stats` (
   `yellow_cards` int NOT NULL,
   `red_cards` int NOT NULL,
   `saves` int NOT NULL,
-  PRIMARY KEY (`id`,`player_id`),
+  PRIMARY KEY (`fixture_id`,`player_id`),
   KEY `match_stats_player_fk` (`player_id`),
-  CONSTRAINT `match_stats_fixture_fk` FOREIGN KEY (`id`) REFERENCES `fixture` (`id`),
+  CONSTRAINT `match_stats_fixture_fk` FOREIGN KEY (`fixture_id`) REFERENCES `fixture` (`id`),
   CONSTRAINT `match_stats_player_fk` FOREIGN KEY (`player_id`) REFERENCES `player` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -211,7 +211,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES ('nandi.u@northeastern.edu','Utsav','Nandi','1995-07-03','helloworld');
+INSERT INTO `users` VALUES ('nandi.u','Utsav','Nandi','1995-07-03','helloworld');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -250,7 +250,7 @@ DROP TABLE IF EXISTS `virtual_team`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `virtual_team` (
-  `id` int NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
   `username` varchar(32) NOT NULL,
   `team_name` varchar(160) NOT NULL,
   `remaining_budget` int NOT NULL,
@@ -518,4 +518,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-04-19 13:10:41
+-- Dump completed on 2023-04-19 13:49:21
