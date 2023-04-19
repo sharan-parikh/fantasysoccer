@@ -37,11 +37,14 @@ def enter_data(connection, filename):
     players = parse_json(read_json(filename))
     for player in tqdm(players):
         with connection.cursor() as cursor:
-            sql = "INSERT IGNORE INTO player (id,first_name,last_name,physical_team_id,position_id,virtual_player_price) VALUES (%s,%s,%s,%s,%s,%s)"
-            val = (player['id'], player['first_name'], player['last_name'], player['physical_team_id'], player['position_id'], player['virtual_player_price'])
-            cursor.execute(sql, val)
-
-    connection.commit()
+            try:
+                sql = "INSERT INTO player (id,first_name,last_name,physical_team_id,position_id,virtual_player_price) VALUES (%s,%s,%s,%s,%s,%s)"
+                val = (player['id'], player['first_name'], player['last_name'], player['physical_team_id'], player['position_id'], player['virtual_player_price'])
+                cursor.execute(sql, val)
+                connection.commit()
+            except Exception as e:
+                print(player)
+                print(e)
 
 
 if __name__ == '__main__':
@@ -56,7 +59,9 @@ if __name__ == '__main__':
             print(connection)
             enter_data(connection=connection, 
                        filename='data/players1.json')
+                       # filename='data/players1_18-04-23.json')
             enter_data(connection=connection, 
                        filename='data/players2.json')
+                       # filename='data/players2_18-04-23.json')
     except Error as e:
         print(e)
