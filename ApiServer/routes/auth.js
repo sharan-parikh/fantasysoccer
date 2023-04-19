@@ -58,7 +58,7 @@ router.post("/signup", async function(req, res) {
         const lastName = req.body.lastName;
         const dob = req.body.dob;
 
-        if(email || password || firstName || lastName || dob) {
+        if(!email || !password || !firstName || !lastName || !dob) {
             throw new Error("One or more user attributes are missing");
         }
 
