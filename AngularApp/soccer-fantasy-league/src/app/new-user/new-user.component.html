@@ -1,0 +1,48 @@
+<div class="signup-form-container">
+    <mat-card class="signup-card">
+        <mat-card-content>
+            <form class="signup-form" [formGroup]="signupForm">
+                <h2>Welcome</h2>
+                <mat-form-field>
+                    <mat-label>Email</mat-label>
+                    <input type="email" matInput formControlName="email"
+                           placeholder="Ex. pat@example.com">
+                    <mat-error *ngIf="signupForm.controls.email.hasError('email') && !signupForm.controls.email.hasError('required')">
+                      Please enter a valid email address
+                    </mat-error>
+                    <mat-error *ngIf="signupForm.controls.email.hasError('required')">
+                      Email is <strong>required</strong>
+                    </mat-error>
+                </mat-form-field>
+                <mat-form-field>
+                    <mat-label>Password</mat-label>
+                    <input type="password" matInput formControlName="password">
+                    <mat-error *ngIf="signupForm.controls.password.hasError('required')">
+                      Password is <strong>required</strong>
+                    </mat-error>
+                </mat-form-field>
+                <mat-form-field>
+                    <mat-label>First Name</mat-label>
+                    <input type="text" matInput formControlName="firstName">
+                    <mat-error *ngIf="signupForm.controls.firstName.hasError('required')">
+                        First name is <strong>required</strong>
+                    </mat-error>
+                </mat-form-field>
+                <mat-form-field>
+                    <mat-label>Last Name</mat-label>
+                    <input type="text" matInput formControlName="lastName">
+                </mat-form-field>
+                <mat-form-field>
+                    <mat-label>Date of Birth</mat-label>
+                    <input matInput [matDatepicker]="picker" formControlName="dob">
+                    <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
+                    <mat-error *ngIf="signupForm.controls.dob.hasError('required')">
+                      Date of Birth is <strong>required</strong>
+                    </mat-error>
+                </mat-form-field>
+                <button mat-raised-button color="primary" (click)="signUp()" [disabled]="signupForm.invalid">Sign Up</button>
+            </form>
+        </mat-card-content>
+    </mat-card>
+</div>

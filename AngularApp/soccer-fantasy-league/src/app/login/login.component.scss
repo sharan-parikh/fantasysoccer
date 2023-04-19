@@ -1,0 +1,23 @@
+
+.login-card {
+    max-width: 600px;
+}
+
+.login-form-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.mdc-card__actions {
+    width: 100%;
+    justify-content: space-around;
+}

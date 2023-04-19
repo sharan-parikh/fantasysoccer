@@ -1,0 +1,14 @@
+
+
+.dashboard-layout {
+    min-height: 0;
+    margin: 0 auto;
+    max-width: 1000px;
+}
+
+
+@media screen and (max-width: 800px) {
+    .dashboard-layout {
+        margin: 0 1rem;
+    }
+}
