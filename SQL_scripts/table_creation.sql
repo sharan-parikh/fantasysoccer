@@ -75,7 +75,7 @@ CREATE TABLE IF NOT EXISTS fixture (
 );
     
 CREATE TABLE IF NOT EXISTS match_stats (
-    id INT NOT NULL,
+    fixture_id INT NOT NULL,
     player_id INT NOT NULL,
     minutes_played INT NOT NULL,
     goals INT NOT NULL,
@@ -83,15 +83,15 @@ CREATE TABLE IF NOT EXISTS match_stats (
     yellow_cards INT NOT NULL,
     red_cards INT NOT NULL,
     saves INT NOT NULL,
-    CONSTRAINT match_stats_pk PRIMARY KEY (id , player_id),
-    CONSTRAINT match_stats_fixture_fk FOREIGN KEY (id)
+    CONSTRAINT match_stats_pk PRIMARY KEY (fixture_id , player_id),
+    CONSTRAINT match_stats_fixture_fk FOREIGN KEY (fixture_id)
         REFERENCES fixture (id),
     CONSTRAINT match_stats_player_fk FOREIGN KEY (player_id)
         REFERENCES player (id)
 );
 
 CREATE TABLE IF NOT EXISTS virtual_team (
-    id INT PRIMARY KEY,
+    id INT PRIMARY KEY AUTO_INCREMENT,
     username VARCHAR(32) UNIQUE NOT NULL,
     team_name VARCHAR(160) UNIQUE NOT NULL,
     remaining_budget INT NOT NULL,
