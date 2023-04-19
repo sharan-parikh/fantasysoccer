@@ -47,8 +47,16 @@ def enter_data(connection, filename):
         with connection.cursor() as cursor:
             try:
                 sql = "INSERT INTO match_stats (id, player_id, minutes_played, goals, assists, yellow_cards, red_cards, saves) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
-                cursor.execute(sql, (item['id'], item['player_id'], item['minutes_played'], item['goals'], item['assists'], item['yellow_cards'], item['red_cards'], item['saves']))
+                val = (item['id'], item['player_id'], item['minutes_played'], item['goals'], item['assists'], item['yellow_cards'], item['red_cards'], item['saves'])
+                cursor.execute(sql, val)
+                # sql = "CALL insert_match_stats(%s, %s, %s, %s, %s, %s, %s, %s)"
+                # val = (item['id'], item['player_id'], item['minutes_played'], item['goals'], item['assists'], item['yellow_cards'], item['red_cards'], item['saves'])
+                # cursor.execute(sql, val)
+                # results = cursor.fetchall()
+                # print('\n', results[0][0])
                 connection.commit()
+            # except Error as error:
+            #     cursor.rollback()
             except Exception as e:
                 print(e)
                 print(item)

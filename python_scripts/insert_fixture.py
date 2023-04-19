@@ -35,9 +35,13 @@ def enter_data(connection, filename):
     items = parse_json(read_json(filename))
     for item in tqdm(items):
         with connection.cursor() as cursor:
-            sql = "INSERT INTO fixture (id, venue_id, match_date, home_team_id, away_team_id) VALUES (%s, %s, %s, %s, %s)"
-            cursor.execute(sql, (item['id'], item['venue_id'], item['match_date'], item['home_team_id'], item['away_team_id']))
-    connection.commit()
+            try:
+                sql = "INSERT INTO fixture (id, venue_id, match_date, home_team_id, away_team_id) VALUES (%s, %s, %s, %s, %s)"
+                cursor.execute(sql, (item['id'], item['venue_id'], item['match_date'], item['home_team_id'], item['away_team_id']))
+                connection.commit()
+            except Exception as e:
+                print(e)
+                print(item)
 
 
 if __name__ == '__main__':
