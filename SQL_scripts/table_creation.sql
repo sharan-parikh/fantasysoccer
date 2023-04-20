@@ -53,9 +53,11 @@ CREATE TABLE IF NOT EXISTS player (
     position_id INT NOT NULL,
     virtual_player_price FLOAT NOT NULL,
     CONSTRAINT player_team_name_fk FOREIGN KEY (physical_team_id)
-        REFERENCES physical_team (id),
+        REFERENCES physical_team (id)
+        ON UPDATE CASCADE ON DELETE RESTRICT,
     CONSTRAINT player_position_fk FOREIGN KEY (position_id)
         REFERENCES player_position (id)
+        ON UPDATE CASCADE ON DELETE RESTRICT
 );
 
 
@@ -66,11 +68,14 @@ CREATE TABLE IF NOT EXISTS fixture (
     home_team_id INT NOT NULL,
     away_team_id INT NOT NULL,
     CONSTRAINT physical_team_home_fk FOREIGN KEY (home_team_id)
-        REFERENCES physical_team (id),
+        REFERENCES physical_team (id)
+        ON UPDATE CASCADE ON DELETE RESTRICT,
     CONSTRAINT physical_team_away_fk FOREIGN KEY (away_team_id)
-        REFERENCES physical_team (id),
+        REFERENCES physical_team (id)
+        ON UPDATE CASCADE ON DELETE RESTRICT,
     CONSTRAINT fixture_details_venue_id_fk FOREIGN KEY (venue_id)
-        REFERENCES venue (id),
+        REFERENCES venue (id)
+        ON UPDATE CASCADE ON DELETE RESTRICT,
     CONSTRAINT home_away_unique UNIQUE (home_team_id , away_team_id)
 );
     
@@ -83,11 +88,15 @@ CREATE TABLE IF NOT EXISTS match_stats (
     yellow_cards INT NOT NULL,
     red_cards INT NOT NULL,
     saves INT NOT NULL,
+    duels_won INT NOT NULL,
+    key_passes INT NOT NULL,
     CONSTRAINT match_stats_pk PRIMARY KEY (fixture_id , player_id),
     CONSTRAINT match_stats_fixture_fk FOREIGN KEY (fixture_id)
-        REFERENCES fixture (id),
+        REFERENCES fixture (id)
+        ON UPDATE CASCADE ON DELETE CASCADE,
     CONSTRAINT match_stats_player_fk FOREIGN KEY (player_id)
         REFERENCES player (id)
+        ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS virtual_team (
@@ -98,15 +107,17 @@ CREATE TABLE IF NOT EXISTS virtual_team (
     creation_date DATE NOT NULL DEFAULT(DATE(NOW())),
     last_update DATE NOT NULL DEFAULT(DATE(NOW())),
     CONSTRAINT virtual_team_username_fk FOREIGN KEY (username)
-        REFERENCES users (username)
+        REFERENCES users (username) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS virtual_team_player (
     virtual_team_id INT NOT NULL,
     player_id INT NOT NULL,
     CONSTRAINT virtual_team_id_fk FOREIGN KEY (virtual_team_id)
-        REFERENCES virtual_team (id),
+        REFERENCES virtual_team (id)
+        ON UPDATE CASCADE ON DELETE CASCADE,
     CONSTRAINT virtual_player_id_fk FOREIGN KEY (player_id)
-        REFERENCES player (id),
-    PRIMARY KEY(virtual_team_id , player_id)
+        REFERENCES player (id)
+        ON UPDATE CASCADE ON DELETE CASCADE,
+    PRIMARY KEY (virtual_team_id , player_id)
 );
