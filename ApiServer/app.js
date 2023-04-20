@@ -5,8 +5,9 @@ const dotenv = require('dotenv');
 dotenv.config();
 const session = require('express-session');
 var bodyParser = require('body-parser');
-const userRouter = require('./routes/auth'); 
-const squadRouter = require('./routes/squad'); 
+const authRouter = require('./routes/auth'); 
+const userRouter = require('./routes/user');
+const playersRouter = require('./routes/players');
 
 const dbService = require('./dbService');
 const jsonParser = bodyParser.json();
@@ -16,11 +17,12 @@ app.use(session({
     resave: true,
     cookie: {
         maxAge: 1000 * 60 * 60 * 24, // 24 hours
+        httpOnly: true
     },
-    saveUninitialized: false
+    saveUninitialized: false,
 }));
 
-app.get('/', function(req, res, next) {
+app.get('/', function(req, res) {
     res.sendStatus(404);
 });
 
@@ -48,8 +50,9 @@ async function connectDB() {
 
 try {
     connectDB();
-    app.use("/api/auth", jsonParser, addContentType, userRouter);
-    app.use("/api/squad", jsonParser, sessionChecker, addContentType, squadRouter);
+    app.use("/api/auth", jsonParser, addContentType, authRouter);
+    app.use("/api/user", jsonParser, sessionChecker, addContentType, userRouter);
+    app.use("/api/players", jsonParser, sessionChecker, addContentType, playersRouter);
     app.listen(3000, function(){
         console.log("Application started and Listening on port 3000");
     });

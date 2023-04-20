@@ -14,6 +14,6 @@ BEGIN
     FROM player AS p INNER JOIN player_position AS pp
     ON p.position_id = pp.id
     INNER JOIN physical_team AS pt ON p.physical_team_id = pt.id
-    WHERE pp.name = position_p;
+    WHERE pp.name = position_p ORDER BY p.virtual_player_price DESC;
 END$$
 DELIMITER ;

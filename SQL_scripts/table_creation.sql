@@ -91,23 +91,22 @@ CREATE TABLE IF NOT EXISTS match_stats (
 );
 
 CREATE TABLE IF NOT EXISTS virtual_team (
-    id INT PRIMARY KEY AUTO_INCREMENT,
+    id INT PRIMARY KEY auto_increment,
     username VARCHAR(32) UNIQUE NOT NULL,
     team_name VARCHAR(160) UNIQUE NOT NULL,
-    remaining_budget FLOAT NOT NULL,
-    creation_date DATE NOT NULL,
-    last_update DATE,
+    remaining_budget INT NOT NULL,
+    creation_date DATE NOT NULL DEFAULT(DATE(NOW())),
+    last_update DATE NOT NULL DEFAULT(DATE(NOW())),
     CONSTRAINT virtual_team_username_fk FOREIGN KEY (username)
         REFERENCES users (username)
 );
 
 CREATE TABLE IF NOT EXISTS virtual_team_player (
-    id INT PRIMARY KEY AUTO_INCREMENT,
     virtual_team_id INT NOT NULL,
     player_id INT NOT NULL,
     CONSTRAINT virtual_team_id_fk FOREIGN KEY (virtual_team_id)
         REFERENCES virtual_team (id),
     CONSTRAINT virtual_player_id_fk FOREIGN KEY (player_id)
         REFERENCES player (id),
-    CONSTRAINT virtual_team_player_unique UNIQUE (virtual_team_id , player_id)
+    PRIMARY KEY(virtual_team_id , player_id)
 );
