@@ -1,7 +1,32 @@
+<mat-toolbar color="primary" style="display: flex; justify-content: space-between;">
+        <span>Fantasy Soccer League</span>
+        <div style="display: flex; justify-content: flex-end">
+                <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
+                        <mat-icon>more_vert</mat-icon>
+                </button>
+                <mat-menu #menu="matMenu">
+                        <button mat-menu-item (click)="abandonAccBtnHandler()">
+                                <span>Abandon account</span>
+                        </button>
+                        <button mat-menu-item (click)="logout()">
+                                <span>Logout</span>
+                        </button>
+                </mat-menu>
+        </div>
+</mat-toolbar>
 
 <div class="dashboard-layout">
-        <app-squad-selection>
+        <mat-tab-group dynamicHeight>
+                <mat-tab label="Sqaud Selection">
+                        <app-squad-selection>
 
-        </app-squad-selection>
+                        </app-squad-selection>
+                </mat-tab>
+                <mat-tab label="Leaderboard"> Content 2 </mat-tab>
+                <mat-tab label="Rename Fantasy Team">
+                        <app-rename-fantasy-team>
+
+                        </app-rename-fantasy-team>
+                </mat-tab>
+        </mat-tab-group>
 </div>
-

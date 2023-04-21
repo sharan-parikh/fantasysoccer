@@ -1,6 +1,6 @@
 
 
-function createHttpResponse({content, status, message}) {
+function createHttpResponse({ content, status, message }) {
     return {
         statusCode: status,
         message: message,

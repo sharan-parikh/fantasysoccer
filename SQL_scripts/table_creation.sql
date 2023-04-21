@@ -1,7 +1,7 @@
-DROP DATABASE IF EXISTS FantasySoccer; -- to be commented out later
-CREATE DATABASE IF NOT EXISTS FantasySoccer;
+DROP DATABASE IF EXISTS fantasysoccer; -- to be commented out later
+CREATE DATABASE IF NOT EXISTS fantasysoccer;
 
-USE `FantasySoccer`;
+USE fantasysoccer;
 
 -- table creation
 CREATE TABLE IF NOT EXISTS users (

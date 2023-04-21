@@ -4,7 +4,7 @@
 
 <mat-dialog-content class="mat-typography">
 
-    <table mat-table [dataSource]="players">
+    <table mat-table [dataSource]="dataSource" *ngIf="dataSource.data.length > 0">
 
         <ng-container matColumnDef="player">
             <th mat-header-cell *matHeaderCellDef>Player</th>
@@ -18,16 +18,20 @@
     
         <ng-container matColumnDef="cost">
             <th mat-header-cell *matHeaderCellDef>Cost</th>
-            <td mat-cell *matCellDef="let data">{{ data.cost | defaultDisplayPlayerDataPipe }}</td>
+            <td mat-cell *matCellDef="let data">{{ data.cost }}</td>
         </ng-container>
     
         <ng-container matColumnDef="totalPoints">
             <th mat-header-cell *matHeaderCellDef>TP</th>
-            <td mat-cell *matCellDef="let data">{{ data.totalPoints | defaultDisplayPlayerDataPipe }}</td>
+            <td mat-cell *matCellDef="let data">{{ data.totalPoints }}</td>
         </ng-container>
 
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
     </table>
+
+    <p *ngIf="dataSource.data.length === 0">
+        You don't have enough money to add more players to the fantasy squad.
+    </p>
 
 </mat-dialog-content>

@@ -41,6 +41,13 @@
                       Date of Birth is <strong>required</strong>
                     </mat-error>
                 </mat-form-field>
+                <mat-form-field>
+                    <mat-label>Fantasy Squad Name</mat-label>
+                    <input type="text" matInput formControlName="fantasySquadName" placeholder="Should be at least 4 characters">
+                    <mat-error *ngIf="signupForm.controls.fantasySquadName.hasError('required')">
+                        Fantasy squad name <strong>required</strong>
+                    </mat-error>
+                </mat-form-field>
                 <button mat-raised-button color="primary" (click)="signUp()" [disabled]="signupForm.invalid">Sign Up</button>
             </form>
         </mat-card-content>
