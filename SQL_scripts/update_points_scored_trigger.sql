@@ -31,11 +31,11 @@ BEGIN
     IF (NEW.saves >= 3) THEN SET pointsScored = pointsScored + ((NEW.saves - MOD(NEW.saves, 3)) DIV 3);
     END IF;
     
-    IF (player_pos = 'Defender' AND NEW.duels_won > 0) THEN SET pointsScored = pointsScored + NEW.duels_won;
-    END IF;
+    -- IF (player_pos = 'Defender' AND NEW.duels_won > 0) THEN SET pointsScored = pointsScored + NEW.duels_won;
+    -- END IF;
     
-    IF (player_pos = 'Midfielder' AND NEW.key_passes > 0) THEN SET pointsScored = pointsScored + NEW.key_passes;
-    END IF;
+    -- IF (player_pos = 'Midfielder' AND NEW.key_passes > 0) THEN SET pointsScored = pointsScored + NEW.key_passes;
+    -- END IF;
     
     UPDATE player
 	SET totalPoints = pointsScored
