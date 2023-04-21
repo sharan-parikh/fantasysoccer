@@ -16,6 +16,7 @@ export class SquadSelectionComponent implements OnInit {
   playersSelected = 0;
   moneyRemaining = "0";
   allPlayersSelected = false;
+  fantasyTeamName = "";
 
   private goalkeepers: PlayerInfo[] = [];
   private defenders: PlayerInfo[] = [];
@@ -46,7 +47,10 @@ export class SquadSelectionComponent implements OnInit {
   }
 
   initDataSources() {
-    this.squadService.getFantasySquad().subscribe(squadDetails => {
+    this.squadService.getFantasySquad().pipe(
+      take(1)
+    ).subscribe(squadDetails => {
+      this.fantasyTeamName = squadDetails.fantasyTeamName;
       this.moneyRemaining = squadDetails.remainingBudget.toFixed(2);
       this.goalkeepers = [...squadDetails.players.goalkeepers];
       while(this.goalkeepers.length < 2) {
@@ -172,6 +176,7 @@ export class SquadSelectionComponent implements OnInit {
         const dialogRef = this.dialog.open(MessageDialogComponent);
         dialogRef.componentInstance.header = "Success";
         dialogRef.componentInstance.message = "Fantasy squad updated successfully.";
+        this.allPlayersSelected = false;
       },
       error: (err) => {
         const dialogRef = this.dialog.open(MessageDialogComponent);

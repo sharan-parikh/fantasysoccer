@@ -46,7 +46,7 @@ function playerInfoRespHandler(player) {
       return {
             id: player.id,
             name: player.player_name,
-            cost: player.player_cost.toFixed(2),
+            cost: parseFloat(player.player_cost.toFixed(2)),
             totalPoints: player.totalPoints,
             position: player.player_position,
             realteamName: player.real_team_name

@@ -14,8 +14,9 @@ router.get('/', async function (req, res, next) {
                 id: row.id,
                 name: row.first_name + " " + row.last_name,
                 realteamName: row.real_team,
-                cost: row.virtual_player_price.toFixed(2),
-                position: row.position
+                cost: parseFloat(row.virtual_player_price.toFixed(2)),
+                position: row.position,
+                totalPoints: row.totalPoints
             });
         });
         res.json(responseUtil.createHttpResponse({

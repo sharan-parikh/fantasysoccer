@@ -1,4 +1,4 @@
-USE `FantasySoccer`;
+USE fantasysoccer;
 
 DELIMITER $$
 CREATE TRIGGER check_max_players_in_team
@@ -11,9 +11,9 @@ BEGIN
     FROM virtual_team_player
     WHERE virtual_team_id = NEW.virtual_team_id;
     
-    IF player_count >= 11 THEN
+    IF player_count >= 15 THEN
         SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'Error: Cannot add more than 11 players in a virtual team.';
+        SET MESSAGE_TEXT = 'Error: Cannot add more than 15 players in a virtual team.';
     END IF;
 END$$
 DELIMITER ;
