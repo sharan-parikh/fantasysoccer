@@ -27,7 +27,7 @@ router.get("/squad", async function (req, res) {
             }));
       } catch (err) {
             console.error(err);
-            if (err.sqlState) {
+            if (err.sqlState === '45000') {
                   res.json(responseUtil.createHttpResponse({
                         status: 400,
                         message: err.sqlMessage,
@@ -74,7 +74,7 @@ router.put("/squad", async function (req, res) {
             }
       } catch (err) {
             console.error(err);
-            if (err.sqlState) {
+            if (err.sqlState === '45000') {
                   res.status(400);
                   res.json(responseUtil.createHttpResponse({
                         status: 400,
@@ -90,5 +90,65 @@ router.put("/squad", async function (req, res) {
       }
 });
 
+router.put("/squad/name", async function (req, res) {
+      const newSqaudName = req.body.name;
+      const conn = dbService.getConnection();
+
+      if (!newSqaudName) {
+            res.status(400);
+            res.json(responseUtil.createHttpResponse({
+                  status: 400,
+                  message: "name parameter missing."
+            }));
+
+      } else {
+            try {
+                  const query = "CALL update_virtual_team_name(?, ?)";
+                  const [result, fields] = await conn.execute(query, [newSqaudName, req.session.username]);
+                  res.json(responseUtil.createHttpResponse({
+                        status: 200,
+                        message: 'Fantasy team name changed successfully'
+                  }));
+            } catch (err) {
+                  if (err.sqlState === '45000') {
+                        res.status(400);
+                        res.json(responseUtil.createHttpResponse({
+                              status: 400,
+                              message: err.sqlMessage,
+                        }));
+                  } else {
+                        console.error(err);
+                        res.status(500);
+                        res.json(responseUtil.createHttpResponse({
+                              status: 500,
+                              message: 'Internal Server Error',
+                        }));
+                  }
+            }
+      }
+});
+
+router.delete('/', async function (req, res) {
+      if (req.session.username) { // checking the user is logged in
+            try {
+                  const conn = dbService.getConnection();
+                  const query = "DELETE FROM users WHERE username = ?";
+                  const [results, fields] = await conn.execute(query, [req.session.username]);
+                  if (results.affectedRows > 0) {
+                        res.json(responseUtil.createHttpResponse({
+                              status: 200,
+                              message: 'User account successfully deleted'
+                        }));
+                  }
+            } catch(err) {
+                  console.error(err);
+                  res.status(500);
+                  res.json(responseUtil.createHttpResponse({
+                        status: 500,
+                        message: 'Internal Server Error'
+                  }));
+            }
+      }
+});
 
 module.exports = router;

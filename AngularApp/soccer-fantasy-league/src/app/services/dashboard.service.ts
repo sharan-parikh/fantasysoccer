@@ -55,4 +55,10 @@ export class SquadService {
       map(resp => resp.response)
     );
   }
+
+  updateFantasyTeamName(name: string | null): Observable<ApiResponse> {
+    return this.http.put<ApiResponse>(`${this.baseUrl}/user/squad/name`, {
+      name: name
+    });
+  }
 }

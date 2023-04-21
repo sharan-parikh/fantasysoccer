@@ -26,6 +26,11 @@ import { AddCredentialsInterceptorService } from './services/add-credentials-int
 import { MessageDialogComponent } from './message-dialog/message-dialog.component';
 import { FantasyTeamLeaderboardComponent } from './fantasy-team-leaderboard/fantasy-team-leaderboard.component';
 import { MatTabsModule } from '@angular/material/tabs';
+import { RenameFantasyTeamComponent } from './rename-fantasy-team/rename-fantasy-team.component';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
+import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -45,7 +50,9 @@ const routes: Routes = [
     DefaultDisplayPlayerDataPipePipe,
     NewUserComponent,
     MessageDialogComponent,
-    FantasyTeamLeaderboardComponent
+    FantasyTeamLeaderboardComponent,
+    RenameFantasyTeamComponent,
+    ConfirmDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -61,7 +68,10 @@ const routes: Routes = [
     NoopAnimationsModule,
     MatDatepickerModule,
     MatNativeDateModule,
-    MatTabsModule
+    MatTabsModule,
+    MatToolbarModule,
+    MatIconModule,
+    MatMenuModule
   ],
   providers: [
     { provide: ErrorStateMatcher, useClass: ShowOnDirtyErrorStateMatcher },

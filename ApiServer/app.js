@@ -50,7 +50,7 @@ try {
     connectDB();
     app.use(cors({
         origin: "http://localhost:4200",
-        methods: ["POST", "PUT", "GET", "OPTIONS"],
+        methods: ["POST", "PUT", "GET", "OPTIONS", "DELETE"],
         credentials: true
     }));
     app.use("/api/auth", jsonParser, addContentType, authRouter);

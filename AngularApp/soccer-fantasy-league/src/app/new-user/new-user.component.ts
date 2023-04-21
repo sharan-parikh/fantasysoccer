@@ -23,7 +23,7 @@ export class NewUserComponent {
     firstName: ['', Validators.required],
     lastName: [''],
     dob: [new Date(), Validators.required],
-    fantasySquadName: ['', Validators.required]
+    fantasySquadName: ['', [Validators.required, Validators.minLength(4)]]
   });
 
   signUp() {

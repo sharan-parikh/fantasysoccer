@@ -13,12 +13,12 @@ export interface UserInfo {
 })
 export class AuthService {
 
-  private baseUrl = "http://localhost:3000/api/auth"
+  private baseUrl = "http://localhost:3000/api"
 
   constructor(private http: HttpClient, private router: Router) { }
 
   logIn(email: string | null, password: string | null): Observable<UserInfo> {
-    return this.http.post<UserInfo>(`${this.baseUrl}/login`, {
+    return this.http.post<UserInfo>(`${this.baseUrl}/auth/login`, {
       username: email,
       password: password
     });
@@ -26,14 +26,14 @@ export class AuthService {
 
   logOut(): Observable<any> {
     // call the REST API to destroy current user session, if any.
-    return this.http.post<any>(`${this.baseUrl}/logout`, {}).pipe(
-      tap(res => {
-        this.router.navigate(['']);
-      })
-    );
+    return this.http.post<any>(`${this.baseUrl}/auth/logout`, {});
   }
 
   signUp(formValue: any): Observable<any> {
-    return this.http.post<any>(`${this.baseUrl}/signup`, formValue);
+    return this.http.post<any>(`${this.baseUrl}/auth/signup`, formValue);
+  }
+
+  abandonAccount(): Observable<any> {
+    return this.http.delete<any>(`${this.baseUrl}/user`);
   }
 }

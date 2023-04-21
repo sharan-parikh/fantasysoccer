@@ -47,6 +47,10 @@ router.post("/login", async function (req, res) {
 
 router.post("/logout", function (req, res) {
     req.session.destroy();
+    res.json(responseUtil.createHttpResponse({
+        status: 200,
+        message: "User logged out successfully."
+    }));
 });
 
 router.post("/signup", async function (req, res) {
