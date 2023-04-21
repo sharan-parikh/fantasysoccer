@@ -10,10 +10,11 @@ BEGIN
     IF(@position_id IS NULL) THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'position argument supplied does not exist.';
     END IF;
     
-	SELECT p.id, p.first_name, p.last_name, p.virtual_player_price, pp.name AS position, pt.name AS real_team
+	SELECT p.id, p.first_name, p.last_name, p.virtual_player_price, pp.name AS position,
+    pt.name AS real_team, p.totalPoints
     FROM player AS p INNER JOIN player_position AS pp
     ON p.position_id = pp.id
     INNER JOIN physical_team AS pt ON p.physical_team_id = pt.id
-    WHERE pp.name = position_p ORDER BY p.virtual_player_price DESC;
+    WHERE pp.name = position_p ORDER BY p.totalPoints DESC, p.virtual_player_price DESC;
 END$$
 DELIMITER ;

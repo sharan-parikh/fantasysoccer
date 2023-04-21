@@ -8,11 +8,6 @@ import { AuthService } from './auth.service';
 })
 export class AddCredentialsInterceptorService implements HttpInterceptor {
 
-  private urlsToIgnore = [
-    "api/auth/login",
-    "api/auth/logout",
-  ]
-
   constructor(private authService: AuthService) { }
 
   intercept(httpRequest: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
@@ -21,7 +16,7 @@ export class AddCredentialsInterceptorService implements HttpInterceptor {
     });
     return next.handle(httpRequest).pipe(
       catchError((err: any) => {
-        if(err.status === 400) {
+        if(err.status === 401) {
           return this.authService.logOut();
         } else {
           throw err;

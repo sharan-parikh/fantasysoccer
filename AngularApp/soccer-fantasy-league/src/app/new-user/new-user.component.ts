@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { AuthService } from '../services/auth.service';
-import { take } from 'rxjs';
+import { switchMap, take } from 'rxjs';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { MessageDialogComponent } from '../message-dialog/message-dialog.component';
@@ -36,9 +36,11 @@ export class NewUserComponent {
         dialogRef.componentInstance.header = 'Success'; 
         dialogRef.componentInstance.message = 'User creation successfull';
         dialogRef.afterClosed().pipe(
-          take(1)
+          switchMap(() => this.authService.logIn(this.signupForm.controls.email.value, this.signupForm.controls.password.value))
         ).subscribe({
-          next: () => this.router.navigate(['/dashboard']),
+          next: () => {
+            this.router.navigate(['/dashboard'])
+          },
           error: (err) => console.log(err)
         });
       },

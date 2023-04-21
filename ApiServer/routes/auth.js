@@ -79,8 +79,8 @@ router.post("/signup", async function (req, res) {
                 }));
             }
 
-            const query = "CALL add_user(?, ?, ?, ?, ?)";
-            await conn.execute(query, [email, firstName, lastName, dob, password]);
+            const query = "CALL add_user(?, ?, ?, ?, ?, ?)";
+            await conn.execute(query, [email, firstName, lastName, dob, password, fantasySquadName]);
             res.json(responseUtil.createHttpResponse({
                 status: 200,
                 message: "User creation successful"
