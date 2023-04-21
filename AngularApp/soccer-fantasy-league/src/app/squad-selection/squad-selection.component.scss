@@ -16,3 +16,11 @@ $primary-palette: map.get($color-config, 'primary');
     display: flex;
     align-items: center;
 }
+
+.squad-selection-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}

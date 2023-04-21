@@ -3,9 +3,9 @@ const router = express.Router();
 const dbService = require('../dbService');
 const responseUtil = require('../utils/response-util');
 
-router.post("/login", async function(req, res){
+router.post("/login", async function (req, res) {
     const conn = dbService.getConnection();
-    if(req.session && req.session.username) {
+    if (req.session && req.session.username) {
         res.json(responseUtil.createHttpResponse({
             content: {
                 username: req.session.username,
@@ -19,7 +19,7 @@ router.post("/login", async function(req, res){
             'SELECT * FROM `users` WHERE `username` = ? AND `password` = ?',
             [req.body.username, req.body.password]
         );
-        if(rows.length == 1) {
+        if (rows.length == 1) {
             req.session.username = req.body.username;
             res.end(JSON.stringify(responseUtil.createHttpResponse({
                 content: {
@@ -35,7 +35,7 @@ router.post("/login", async function(req, res){
                 message: 'Incorrect credentials supplied'
             }));
         }
-    } catch(err) {
+    } catch (err) {
         console.error(err);
         res.json(responseUtil.createHttpResponse({
             content: undefined,
@@ -45,11 +45,11 @@ router.post("/login", async function(req, res){
     }
 });
 
-router.post("/logout", function(req, res) {
+router.post("/logout", function (req, res) {
     req.session.destroy();
 });
 
-router.post("/signup", async function(req, res) {
+router.post("/signup", async function (req, res) {
     const conn = dbService.getConnection();
     try {
         const email = req.body.email;
@@ -57,23 +57,37 @@ router.post("/signup", async function(req, res) {
         const firstName = req.body.firstName;
         const lastName = req.body.lastName;
         const dob = req.body.dob;
+        const fantasySquadName = req.body.fantasySquadName
 
-        if(!email || !password || !firstName || !lastName || !dob) {
-            throw new Error("One or more user attributes are missing");
+        if (!email || !password || !firstName || !fantasySquadName || !dob) {
+            res.status(400);
+            res.json(responseUtil.createHttpResponse({
+                status: 400,
+                message: "One or more user attributes are missing"
+            }));
+        } else {
+            const [rows, fields] = await conn.execute('SELECT * FROM `virtual_team` WHERE team_name = ?', [fantasySquadName]);
+            if (rows.length >= 1) {
+                res.status(501);
+                res.json(responseUtil.createHttpResponse({
+                    status: 501,
+                    message: "Fantasy team name already taken."
+                }));
+            }
+
+            const query = "CALL add_user(?, ?, ?, ?, ?)";
+            await conn.execute(query, [email, firstName, lastName, dob, password]);
+            res.json(responseUtil.createHttpResponse({
+                status: 200,
+                message: "User creation successful"
+            }));
         }
-
-        const query = "CALL add_user(?, ?, ?, ?, ?)";
-        await conn.execute(query, [email, firstName, lastName, dob, password]);
-        res.json(responseUtil.createHttpResponse({
-            status: 200,
-            message: "User creation successful"
-        }));
-    } catch(err) {
+    } catch (err) {
         console.error(err);
         res.status(500);
         res.json(responseUtil.createHttpResponse({
             status: 500,
-            message: err.message || "Unable to add new user."
+            message: "Unable to add new user due to an unexpected error."
         }));
     }
 });

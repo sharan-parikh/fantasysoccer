@@ -16,11 +16,9 @@ export class AddCredentialsInterceptorService implements HttpInterceptor {
   constructor(private authService: AuthService) { }
 
   intercept(httpRequest: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    if(this.urlsToIgnore.every(url => httpRequest.url.search(url) === -1)) {
-      httpRequest = httpRequest.clone({
-        withCredentials: true
-      });
-    }
+    httpRequest = httpRequest.clone({
+      withCredentials: true
+    });
     return next.handle(httpRequest).pipe(
       catchError((err: any) => {
         if(err.status === 400) {

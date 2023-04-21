@@ -1,11 +1,12 @@
 
 const express = require("express");
+const cors = require('cors');
 const app = express();
 const dotenv = require('dotenv');
 dotenv.config();
 const session = require('express-session');
 var bodyParser = require('body-parser');
-const authRouter = require('./routes/auth'); 
+const authRouter = require('./routes/auth');
 const userRouter = require('./routes/user');
 const playersRouter = require('./routes/players');
 
@@ -16,18 +17,15 @@ app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: true,
     cookie: {
-        maxAge: 1000 * 60 * 60 * 24, // 24 hours
-        httpOnly: true
+        maxAge: 1000 * 60 * 60 * 24, // 24 hours,
+        httpOnly: true,
+        sameSite: false
     },
     saveUninitialized: false,
 }));
 
-app.get('/', function(req, res) {
-    res.sendStatus(404);
-});
-
 function sessionChecker(req, res, next) {
-    if(req.session.username) {
+    if (req.session.username) {
         next();
     } else {
         res.sendStatus(401);
@@ -50,13 +48,19 @@ async function connectDB() {
 
 try {
     connectDB();
+    app.use(cors({
+        origin: "http://localhost:4200",
+        methods: ["POST", "PUT", "GET", "OPTIONS"],
+        credentials: true
+    }));
     app.use("/api/auth", jsonParser, addContentType, authRouter);
     app.use("/api/user", jsonParser, sessionChecker, addContentType, userRouter);
     app.use("/api/players", jsonParser, sessionChecker, addContentType, playersRouter);
-    app.listen(3000, function(){
-        console.log("Application started and Listening on port 3000");
+    const port = process.env.PORT || 3000;
+    app.listen(port, function () {
+        console.log(`Application started and Listening on port ${port}`);
     });
-} catch(err) {
+} catch (err) {
     console.error(err);
 }
 

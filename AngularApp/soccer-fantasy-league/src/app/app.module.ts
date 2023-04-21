@@ -3,7 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
-import {MatCardModule} from '@angular/material/card';
+import { MatCardModule } from '@angular/material/card';
 import { FormsModule } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ErrorStateMatcher, MatNativeDateModule, ShowOnDirtyErrorStateMatcher } from '@angular/material/core';
@@ -21,6 +21,11 @@ import { DefaultDisplayPlayerDataPipePipe } from './pipes/default-display-player
 import { NewUserComponent } from './new-user/new-user.component';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { MatDatepickerModule } from '@angular/material/datepicker';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { AddCredentialsInterceptorService } from './services/add-credentials-interceptor.service';
+import { MessageDialogComponent } from './message-dialog/message-dialog.component';
+import { FantasyTeamLeaderboardComponent } from './fantasy-team-leaderboard/fantasy-team-leaderboard.component';
+import { MatTabsModule } from '@angular/material/tabs';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -38,7 +43,9 @@ const routes: Routes = [
     RemovePlayerDialogComponent,
     PlayerSelectionListComponent,
     DefaultDisplayPlayerDataPipePipe,
-    NewUserComponent
+    NewUserComponent,
+    MessageDialogComponent,
+    FantasyTeamLeaderboardComponent
   ],
   imports: [
     BrowserModule,
@@ -53,10 +60,12 @@ const routes: Routes = [
     MatDialogModule,
     NoopAnimationsModule,
     MatDatepickerModule,
-    MatNativeDateModule
+    MatNativeDateModule,
+    MatTabsModule
   ],
   providers: [
-    {provide: ErrorStateMatcher, useClass: ShowOnDirtyErrorStateMatcher}
+    { provide: ErrorStateMatcher, useClass: ShowOnDirtyErrorStateMatcher },
+    { provide: HTTP_INTERCEPTORS, useClass: AddCredentialsInterceptorService, multi: true }
   ],
   bootstrap: [AppComponent]
 })

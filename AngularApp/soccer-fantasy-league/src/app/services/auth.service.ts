@@ -13,7 +13,7 @@ export interface UserInfo {
 })
 export class AuthService {
 
-  private baseUrl = "http://localhost:4200/api/auth"
+  private baseUrl = "http://localhost:3000/api/auth"
 
   constructor(private http: HttpClient, private router: Router) { }
 

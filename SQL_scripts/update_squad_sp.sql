@@ -17,10 +17,16 @@ BEGIN
 			SET @full_error = CONCAT("ERROR ", @errno, " (", @sqlstate, "): ", @text);
 			SELECT @full_error;
 			ROLLBACK;
+            SET autocommit = 1;
+            RESIGNAL;
 		END;
     SET autocommit = 0;
     
     START TRANSACTION;
+		IF( (SELECT username FROM users WHERE username = username_p) IS NULL ) THEN SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'User with supplied username does not exist';
+        END IF;
+        
 		SET @playersCount = ( SELECT COUNT(id) FROM player WHERE FIND_IN_SET(id, playerIdList));
         IF (@playersCount < 15) THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'number of player ids supplied is less than 15';
         END IF;
@@ -31,6 +37,8 @@ BEGIN
         
         SET @virtualTeamId = ( SELECT id FROM virtual_team WHERE username = username_p );
         DELETE FROM virtual_team_player WHERE virtual_team_id = @virtualTeamId;
+        
+        UPDATE virtual_team SET remaining_budget = (100 - @totalCost) WHERE id = @virtualTeamId;
         
         OPEN player_cur;
 		player_loop:

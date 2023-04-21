@@ -3,35 +3,92 @@ const router = express.Router();
 const dbService = require('../dbService');
 const responseUtil = require("../utils/response-util");
 
-router.get("/", async function(req, res, next){
-        const conn = dbService.getConnection();
-        
-        try {
-          const username = req.session.username;
-          const query = "CALL get_sqaud_by_username(?)";
-          const [rows, field] = await conn.execute(query, [username]);
-          const players = {
-                goalkeepers: rows.filter(row => row.position === 'Goalkeeper'),
-                defenders: rows.filter(row => row.position === 'Defender'),
-                midfielders: rows.filter(row => row.position === 'Midfielder'),
-                forwards: rows.filter(row => row.position === 'Attacker')
-          }
-          res.json(responseUtil.createHttpResponse({
-                status: 200,
-                message: 'Fantasy squad fetched successfully.',
-                content: players
-          }));
-        } catch(err) {
-          console.error(err);
-          res.status(500);
-          res.json(responseUtil.createHttpResponse({
-                status: 500,
-                message: 'Could not fetch fantasy squad.'
-          }));
-        }
-        next();
+router.get("/squad", async function (req, res) {
+      const conn = dbService.getConnection();
+
+      try {
+            const username = req.session.username;
+            const query = "CALL get_squad_details_by_username(?)";
+            const [result, field] = await conn.execute(query, [username]);
+            const players = {
+                  goalkeepers: result[1].filter(row => row.player_position === 'Goalkeeper').map(row => playerInfoRespHandler(row)),
+                  defenders: result[1].filter(row => row.player_position === 'Defender').map(row => playerInfoRespHandler(row)),
+                  midfielders: result[1].filter(row => row.player_position === 'Midfielder').map(row => playerInfoRespHandler(row)),
+                  forwards: result[1].filter(row => row.player_position === 'Attacker').map(row => playerInfoRespHandler(row))
+            }
+            res.json(responseUtil.createHttpResponse({
+                  status: 200,
+                  message: 'Fantasy squad fetched successfully.',
+                  content: {
+                        players,
+                        remainingBudget: result[0][0].remaining_budget,
+                        fantasyTeamName: result[0][0].fantasy_team_name
+                  }
+            }));
+      } catch (err) {
+            console.error(err);
+            if (err.sqlState) {
+                  res.json(responseUtil.createHttpResponse({
+                        status: 400,
+                        message: err.sqlMessage,
+                  }));
+            } else {
+                  res.status(500);
+                  res.json(responseUtil.createHttpResponse({
+                        status: 500,
+                        message: 'Internal Server Error'
+                  }));
+            }
+      }
 });
 
+function playerInfoRespHandler(player) {
+      return {
+            id: player.id,
+            name: player.player_name,
+            cost: player.player_cost.toFixed(2),
+            totalPoints: player.totalPoints,
+            position: player.player_position,
+            realteamName: player.real_team_name
+      };
+}
+
+router.put("/squad", async function (req, res) {
+      const selectedPlayers = req.body;
+      try {
+            if (!selectedPlayers || selectedPlayers.length != 15) {
+                  res.status(400);
+                  res.json(responseUtil.createHttpResponse({
+                        status: 400,
+                        message: "No player list supplied or not all 15 players were supplied."
+                  }));
+            } else {
+                  const selectedPlayerIds = selectedPlayers.map(player => player.id);
+                  const conn = dbService.getConnection();
+                  const query = "CALL update_squad(?,?)";
+                  const [result, fields] = await conn.execute(query, [selectedPlayerIds.toString(), req.session.username]);
+                  res.json(responseUtil.createHttpResponse({
+                        status: 200,
+                        message: "Fantasy sqaud updated successfully."
+                  }));
+            }
+      } catch (err) {
+            console.error(err);
+            if (err.sqlState) {
+                  res.status(400);
+                  res.json(responseUtil.createHttpResponse({
+                        status: 400,
+                        message: err.sqlMessage,
+                  }));
+            } else {
+                  res.status(500);
+                  res.json(responseUtil.createHttpResponse({
+                        status: 500,
+                        message: 'Internal Server Error',
+                  }));
+            }
+      }
+});
 
 
 module.exports = router;
