@@ -6,7 +6,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 export class DefaultDisplayPlayerDataPipePipe implements PipeTransform {
 
   transform(value: number): string {
-    return (value === 0) ? "" : value.toString();
+    return (value === 0) ? "" : `${value ? value : ''}`;
   }
 
 }

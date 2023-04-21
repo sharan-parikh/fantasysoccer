@@ -1,7 +1,7 @@
-DROP DATABASE IF EXISTS FantasySoccer; -- to be commented out later
-CREATE DATABASE IF NOT EXISTS FantasySoccer;
+DROP DATABASE IF EXISTS fantasysoccer; -- to be commented out later
+CREATE DATABASE IF NOT EXISTS fantasysoccer;
 
-USE `FantasySoccer`;
+USE fantasysoccer;
 
 -- table creation
 CREATE TABLE IF NOT EXISTS users (
@@ -52,6 +52,7 @@ CREATE TABLE IF NOT EXISTS player (
     physical_team_id INT NOT NULL,
     position_id INT NOT NULL,
     virtual_player_price FLOAT NOT NULL,
+    totalPoints INT NOT NULL DEFAULT(0),
     CONSTRAINT player_team_name_fk FOREIGN KEY (physical_team_id)
         REFERENCES physical_team (id)
         ON UPDATE CASCADE ON DELETE RESTRICT,
@@ -67,6 +68,7 @@ CREATE TABLE IF NOT EXISTS fixture (
     match_date DATE,
     home_team_id INT NOT NULL,
     away_team_id INT NOT NULL,
+    match_week INT NOT NULL,
     CONSTRAINT physical_team_home_fk FOREIGN KEY (home_team_id)
         REFERENCES physical_team (id)
         ON UPDATE CASCADE ON DELETE RESTRICT,
@@ -106,6 +108,7 @@ CREATE TABLE IF NOT EXISTS virtual_team (
     remaining_budget INT NOT NULL,
     creation_date DATE NOT NULL DEFAULT(DATE(NOW())),
     last_update DATE NOT NULL DEFAULT(DATE(NOW())),
+    totalPoints INT NOT NULL DEFAULT(0),
     CONSTRAINT virtual_team_username_fk FOREIGN KEY (username)
         REFERENCES users (username) ON UPDATE CASCADE ON DELETE CASCADE
 );

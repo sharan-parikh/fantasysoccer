@@ -1,5 +1,6 @@
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 
 export interface PlayerInfo {
   id: number;
@@ -7,42 +8,57 @@ export interface PlayerInfo {
   cost: number;
   totalPoints: number;
   position: string;
+  realteamName: string;
+}
+
+export interface ApiResponse {
+  statusCode: number;
+  message: string;
+  response: any;
 }
 
 export interface FantasySquadResponse {
-  goalKeepers: PlayerInfo[];
-  defenders: PlayerInfo[];
-  midfielders: PlayerInfo[];
-  forwards: PlayerInfo[];
+  players: {
+    goalkeepers: PlayerInfo[];
+    defenders: PlayerInfo[];
+    midfielders: PlayerInfo[];
+    forwards: PlayerInfo[];
+  },
+  remainingBudget: number;
+  fantasyTeamName: string;
 }
 
 @Injectable({
   providedIn: 'root'
 })
-export class SqaudService {
+export class SquadService {
 
-  constructor() { }
+  private baseUrl = "http://localhost:3000/api";
+
+  constructor(private http: HttpClient) { }
 
   getFantasySquad(): Observable<FantasySquadResponse> {
-    return new Observable((observer) => {
-      observer.next({
-        goalKeepers: [],
-        defenders: [],
-        midfielders: [],
-        forwards: [
-          {
-            id: 1, name: "Lionel Messi", cost: 10, totalPoints: 40, position: 'Attacker'
-          }
-        ]
-      });
-    });
+    return this.http.get<ApiResponse>(`${this.baseUrl}/user/squad`).pipe(
+      map(resp => resp.response)
+    );
   }
 
-  getPlayers(): Observable<PlayerInfo[]> {
-    return new Observable((observer) => {
-      observer.next([
+  updateFantasySqaud(players: PlayerInfo[]): Observable<ApiResponse> {
+    return this.http.put<ApiResponse>(`${this.baseUrl}/user/squad`, players);
+  }
 
-      ]);
-    })
+  getPlayers(position: string): Observable<PlayerInfo[]> {
+    const params = new HttpParams().append("position", position);
+    return this.http.get<ApiResponse>(`${this.baseUrl}/players`, {
+      params: params
+    }).pipe(
+      map(resp => resp.response)
+    );
+  }
+
+  updateFantasyTeamName(name: string | null): Observable<ApiResponse> {
+    return this.http.put<ApiResponse>(`${this.baseUrl}/user/squad/name`, {
+      name: name
+    });
   }
 }

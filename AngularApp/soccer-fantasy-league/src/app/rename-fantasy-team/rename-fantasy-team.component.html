@@ -1,0 +1,14 @@
+<mat-card>
+    <mat-card-content>
+        <mat-form-field style="min-width: 400px">
+            <mat-label>Provide new fantasy team name</mat-label>
+            <input type="email" matInput [formControl]="teamNameControl" placeholder="Should be at least 4 characters">
+            <mat-error *ngIf="teamNameControl.hasError('required')">
+                Team name is <strong>required</strong>
+            </mat-error>
+        </mat-form-field>
+    </mat-card-content>
+    <mat-card-actions>
+        <button mat-raised-button [disabled]="teamNameControl.hasError('required')" (click)="rename()">Submit</button>
+    </mat-card-actions>
+</mat-card>
